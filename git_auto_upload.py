@@ -57,6 +57,14 @@ def git_upload(directory):
 
 if __name__ == "__main__":
     # 替换为你的本地文档仓库目录
+<<<<<<< HEAD
     directory = r'D:\new\java_usages'
     git_upload(directory)
     
+=======
+    directory = r"D:\new\java八股"
+    while True:
+        git_upload(directory)
+        # 每 6 小时执行一次（6 * 60 * 60 秒）
+        time.sleep(6 * 60 * 60)
+>>>>>>> parent of 4d218e7 (Auto commit)
