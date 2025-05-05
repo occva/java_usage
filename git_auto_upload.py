@@ -4,6 +4,10 @@ import os
 
 def git_upload(directory):
     try:
+        # 取消 Git 代理设置
+        subprocess.run(['git', 'config', '--global', '--unset', 'http.proxy'], capture_output=True)
+        subprocess.run(['git', 'config', '--global', '--unset', 'https.proxy'], capture_output=True)
+
         # 切换到指定目录
         os.chdir(directory)
         print(f"当前工作目录: {os.getcwd()}")
@@ -27,6 +31,22 @@ def git_upload(directory):
             push_result = subprocess.run(['git', 'push'], capture_output=True, text=True, encoding='utf-8')
             if push_result.returncode != 0:
                 print(f"推送时出错: {push_result.stderr}")
+                # 尝试获取更详细的网络错误信息
+                try:
+                    import socket
+                    import errno
+                    # 模拟检查网络连接
+                    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                    s.settimeout(5)
+                    s.connect(('github.com', 443))
+                    s.close()
+                except socket.error as se:
+                    if se.errno == errno.ECONNREFUSED:
+                        print("无法连接到 GitHub 服务器，请检查网络或 GitHub 状态。")
+                    elif se.errno == errno.ETIMEDOUT:
+                        print("连接超时，请检查网络连接。")
+                    else:
+                        print(f"网络连接出现未知错误: {se}")
             else:
                 print("文件已成功上传到 Git 仓库。")
         else:
